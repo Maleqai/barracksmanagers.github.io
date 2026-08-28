@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event Calendar — Barracks Manager Automation</title>
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <h1>📅 Event Calendar</h1>
+        <p class="tagline">Upcoming inspections, drills, meetings, and other events</p>
+      </div>
+      <nav><a href="../../index.html">Dashboard</a></nav>
+    </div>
+  </header>
+
+  <main>
+    <a class="back-link" href="../../index.html">&larr; Back to dashboard</a>
+
+    <div class="module-header">
+      <div class="month-nav">
+        <button id="prevMonth" aria-label="Previous month">&larr;</button>
+        <span class="month-label" id="monthLabel"></span>
+        <button id="nextMonth" aria-label="Next month">&rarr;</button>
+      </div>
+      <button id="todayBtn" class="back-link" style="border:1px solid var(--border); border-radius:6px; padding:0.35rem 0.7rem; background:var(--card-bg); cursor:pointer;">Jump to today</button>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </div>
+
+    <div id="detailPanel"></div>
+
+    <div class="card">
+      <h2 class="section-title">Upcoming events</h2>
+      <ul class="event-list" id="upcomingList"></ul>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Edit <code>events.json</code> in this module's folder to add, change, or remove events.</p>
+  </footer>
+
+  <script src="calendar.js"></script>
+</body>
+</html>

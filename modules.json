@@ -1,0 +1,16 @@
+[
+  {
+    "id": "calendar",
+    "name": "Event Calendar",
+    "description": "View upcoming inspections, drills, meetings, and other barracks events.",
+    "icon": "📅",
+    "path": "modules/calendar/index.html"
+  },
+  {
+    "id": "roster",
+    "name": "Cleaning Roster",
+    "description": "Rotating weekday cleaning assignment across all rooms on 3 floors.",
+    "icon": "🧹",
+    "path": "modules/roster/index.html"
+  }
+]

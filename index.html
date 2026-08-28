@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barracks Manager Automation</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <h1>🪖 Barracks Manager Automation</h1>
+        <p class="tagline">A growing set of tools to automate barracks manager tasks</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="today-grid" id="todayGrid">
+      <div class="card today-card">
+        <p class="label">Today's cleaning duty</p>
+        <p class="value" id="todayRoom">Loading…</p>
+        <p class="sub" id="todayRoomSub"></p>
+      </div>
+      <div class="card today-card">
+        <p class="label">Next event</p>
+        <p class="value" id="nextEventTitle">Loading…</p>
+        <p class="sub" id="nextEventSub"></p>
+      </div>
+    </div>
+
+    <h2 class="section-title">Modules</h2>
+    <div class="module-grid" id="moduleGrid"></div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Built to grow — see <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> for how to add a new module.</p>
+  </footer>
+
+  <script src="modules/roster/roster-logic.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

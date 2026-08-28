@@ -78,7 +78,8 @@
         } else {
           const note = document.createElement("div");
           note.className = "event-title-mini";
-          note.textContent = "Rotation not started";
+          note.textContent = "Not started";
+          note.title = "Rotation hasn't started yet";
           cell.appendChild(note);
         }
       }

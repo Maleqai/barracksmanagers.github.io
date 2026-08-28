@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cleaning Roster — Barracks Manager Automation</title>
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <h1>🧹 Cleaning Roster</h1>
+        <p class="tagline">Rotating weekday room assignments, all 3 floors</p>
+      </div>
+      <nav><a href="../../index.html">Dashboard</a></nav>
+    </div>
+  </header>
+
+  <main>
+    <a class="back-link" href="../../index.html">&larr; Back to dashboard</a>
+
+    <div class="module-header">
+      <div class="month-nav">
+        <button id="prevMonth" aria-label="Previous month">&larr;</button>
+        <span class="month-label" id="monthLabel"></span>
+        <button id="nextMonth" aria-label="Next month">&rarr;</button>
+      </div>
+      <button id="todayBtn" class="back-link" style="border:1px solid var(--border); border-radius:6px; padding:0.35rem 0.7rem; background:var(--card-bg); cursor:pointer;">Jump to today</button>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="calendar-grid" id="calendarGrid"></div>
+      <p class="empty-state" style="margin-top:0.5rem;">Weekends have no cleaning assignment. Each weekday shows the one room on duty that day.</p>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Rooms by floor</h2>
+      <div class="floor-columns" id="floorColumns"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Edit <code>rooms.json</code> in this module's folder to change room numbers, floors, or the rotation start date.</p>
+  </footer>
+
+  <script src="roster-logic.js"></script>
+  <script src="roster.js"></script>
+</body>
+</html>

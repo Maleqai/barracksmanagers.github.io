@@ -1,0 +1,389 @@
+/* ============================================================
+   Barracks Manager Automation — shared stylesheet
+   Loaded by index.html and every module page.
+   ============================================================ */
+
+:root {
+  --olive-dark: #2f3b27;
+  --olive: #3d4a34;
+  --olive-light: #5a6b4c;
+  --tan: #c9b899;
+  --tan-light: #f0ead9;
+  --bg: #f5f3ee;
+  --card-bg: #ffffff;
+  --ink: #24291f;
+  --ink-muted: #5c6353;
+  --border: #ddd6c4;
+  --accent: #b5651d;
+  --danger: #a13d3d;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+a {
+  color: var(--olive-dark);
+}
+
+.site-header {
+  background: var(--olive-dark);
+  color: var(--tan-light);
+  padding: 1.25rem 1.5rem;
+}
+
+.site-header .header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  letter-spacing: 0.02em;
+}
+
+.site-header .tagline {
+  margin: 0.15rem 0 0;
+  color: var(--tan);
+  font-size: 0.9rem;
+}
+
+.site-header nav a {
+  color: var(--tan-light);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-bottom: 1px solid transparent;
+}
+
+.site-header nav a:hover {
+  border-bottom-color: var(--tan);
+}
+
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 3rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+}
+
+.section-title {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--olive-dark);
+  margin: 0 0 0.9rem;
+}
+
+.today-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.today-card .label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-muted);
+  margin: 0 0 0.4rem;
+}
+
+.today-card .value {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--olive-dark);
+  margin: 0;
+}
+
+.today-card .sub {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  margin-top: 0.3rem;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.module-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.module-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.module-card .icon {
+  font-size: 1.8rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.module-card h3 {
+  margin: 0 0 0.3rem;
+  color: var(--olive-dark);
+}
+
+.module-card p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--ink-muted);
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  text-decoration: none;
+  color: var(--olive-dark);
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.module-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.month-nav button {
+  background: var(--olive);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.month-nav button:hover {
+  background: var(--olive-dark);
+}
+
+.month-nav .month-label {
+  font-weight: 600;
+  min-width: 11ch;
+  text-align: center;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.calendar-grid .dow {
+  text-align: center;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding-bottom: 0.25rem;
+}
+
+.day-cell {
+  min-height: 84px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.35rem;
+  font-size: 0.8rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.day-cell.empty {
+  background: transparent;
+  border-color: transparent;
+}
+
+.day-cell.weekend {
+  background: var(--tan-light);
+}
+
+.day-cell.today {
+  border-color: var(--accent);
+  border-width: 2px;
+}
+
+.day-cell .date-num {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.day-cell.has-event {
+  cursor: pointer;
+}
+
+.day-cell.has-event:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.event-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 4px;
+}
+
+.event-title-mini {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.room-assignment {
+  font-size: 0.72rem;
+  color: var(--olive-dark);
+  background: var(--tan-light);
+  border-radius: 4px;
+  padding: 0.1rem 0.3rem;
+  display: inline-block;
+}
+
+.detail-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  background: var(--card-bg);
+  margin-bottom: 1.5rem;
+}
+
+.detail-panel h3 {
+  margin: 0 0 0.3rem;
+  color: var(--olive-dark);
+}
+
+.detail-panel .detail-date {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  margin-bottom: 0.5rem;
+}
+
+.event-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.event-list li {
+  border-left: 3px solid var(--accent);
+  padding: 0.4rem 0.75rem;
+  background: var(--card-bg);
+  border-radius: 0 6px 6px 0;
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.event-list .ev-date {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.event-list .ev-title {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.floor-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.floor-columns h4 {
+  margin: 0 0 0.5rem;
+  color: var(--olive-dark);
+}
+
+.floor-columns ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.88rem;
+}
+
+.floor-columns li {
+  padding: 0.15rem 0;
+  color: var(--ink-muted);
+}
+
+.floor-columns li.assigned-today {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.empty-state {
+  color: var(--ink-muted);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.site-footer {
+  text-align: center;
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  padding: 1.5rem 1rem 2.5rem;
+}
+
+.site-footer a {
+  color: var(--ink-muted);
+}

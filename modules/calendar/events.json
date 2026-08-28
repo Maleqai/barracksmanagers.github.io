@@ -1,0 +1,32 @@
+[
+  {
+    "date": "2026-09-01",
+    "title": "Monthly Health & Welfare Inspection",
+    "description": "Standard health and welfare walkthrough of all rooms and common areas.",
+    "type": "inspection"
+  },
+  {
+    "date": "2026-09-04",
+    "title": "Barracks Council Meeting",
+    "description": "Monthly barracks council meeting — resident concerns and updates.",
+    "type": "meeting"
+  },
+  {
+    "date": "2026-09-11",
+    "title": "Fire Alarm & Safety Drill",
+    "description": "Scheduled fire alarm test and evacuation drill for the building.",
+    "type": "drill"
+  },
+  {
+    "date": "2026-09-18",
+    "title": "Command Layout Inspection",
+    "description": "Layout inspection conducted by the chain of command.",
+    "type": "inspection"
+  },
+  {
+    "date": "2026-10-01",
+    "title": "Monthly Health & Welfare Inspection",
+    "description": "Standard health and welfare walkthrough of all rooms and common areas.",
+    "type": "inspection"
+  }
+]

@@ -34,22 +34,45 @@
       .join("");
   }
 
+  function formatTime(isoTimestamp) {
+    // See modules/roster/roster.js for why no timezone conversion happens here.
+    const d = new Date(isoTimestamp);
+    if (isNaN(d.getTime())) return isoTimestamp;
+    return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  }
+
   function renderTodayRoom() {
-    fetch("modules/roster/rooms.json")
-      .then((r) => r.json())
-      .then((data) => {
+    Promise.all([
+      fetch("modules/roster/rooms.json").then((r) => r.json()),
+      fetch("modules/roster/completions.json").then((r) => r.json()),
+    ])
+      .then(([rooms, completionsData]) => {
         const list = document.getElementById("todayDuty");
+        const today = todayStr();
         const assignments = window.RosterLogic
-          ? window.RosterLogic.getAssignmentsForDate(todayStr(), data)
+          ? window.RosterLogic.getAssignmentsForDate(today, rooms)
           : [];
         const assigned = assignments.filter((a) => a.room);
+        const completionsIndex = window.RosterLogic
+          ? window.RosterLogic.buildCompletionsIndex(completionsData)
+          : new Map();
 
         if (assigned.length > 0) {
           list.innerHTML = assigned
-            .map((a) => `<li><strong>${a.floor}:</strong> Room ${a.room}</li>`)
+            .map((a) => {
+              const completion = window.RosterLogic.getCompletion(completionsIndex, a.room, today);
+              const status = completion
+                ? `<span class="mini-done">✓ Done ${formatTime(completion.timestamp)}</span>`
+                : `<span class="mini-pending">Not yet done</span>`;
+              return `<li><strong>${a.floor}:</strong> Room ${a.room} — ${status}</li>`;
+            })
             .join("");
         } else {
           list.innerHTML = `<li>No duty today — weekend, or rotation hasn't started yet.</li>`;
+        }
+
+        if (completionsData.formUrl) {
+          list.innerHTML += `<li><a href="${completionsData.formUrl}" target="_blank" rel="noopener">Report your floor's duty &rarr;</a></li>`;
         }
       })
       .catch(() => {

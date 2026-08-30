@@ -16,6 +16,8 @@
   --border: #ddd6c4;
   --accent: #b5651d;
   --danger: #a13d3d;
+  --success: #2e7d4f;
+  --success-bg: #e3f0e7;
   --radius: 10px;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.12);
@@ -146,6 +148,21 @@ main {
 
 .duty-summary li strong {
   color: var(--ink);
+}
+
+.duty-summary .mini-done {
+  color: var(--success);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.duty-summary .mini-pending {
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+}
+
+.duty-summary li a {
+  font-size: 0.85rem;
 }
 
 .module-grid {
@@ -333,6 +350,18 @@ main {
   flex-shrink: 0;
 }
 
+.room-assignment.is-done {
+  background: var(--success-bg);
+  border-left-color: var(--success);
+}
+
+.room-assignment .done-check {
+  color: var(--success);
+  font-weight: 700;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .duty-list {
   display: flex;
   flex-direction: column;
@@ -424,6 +453,48 @@ main {
   font-size: 0.9rem;
 }
 
+.today-status-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.today-status-row {
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  border: 1px solid var(--border);
+}
+
+.today-status-row.is-done {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--olive-dark);
+}
+
+.today-status-row.is-pending {
+  background: var(--tan-light);
+  color: var(--ink);
+}
+
+.report-duty-btn {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.6rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.report-duty-btn:hover {
+  opacity: 0.92;
+}
+
 .notes-list {
   margin: 0;
   padding: 0;
@@ -493,6 +564,13 @@ main {
      screen -- the colored left border on .room-assignment still marks
      which floor each line is. See the legend under the calendar. */
   .room-assignment .floor-tag {
+    display: none;
+  }
+
+  /* Same reasoning as the floor-tag above: no room left for a ✓ glyph
+     next to the room number at this width -- the green background and
+     border on .is-done already signal "done" without it. */
+  .room-assignment .done-check {
     display: none;
   }
 

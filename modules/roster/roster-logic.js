@@ -70,11 +70,30 @@
     return getAssignmentsForDate(dateStr, data).find((a) => a.floor === floorName) || null;
   }
 
+  // completionsData is the parsed modules/roster/completions.json.
+  // Returns a Map keyed by "room|date" -> completion record, for O(1)
+  // lookups while rendering a month grid.
+  function buildCompletionsIndex(completionsData) {
+    const index = new Map();
+    (completionsData.completions || []).forEach((c) => {
+      index.set(`${c.room}|${c.date}`, c);
+    });
+    return index;
+  }
+
+  // Returns the completion record for this room+date, or null if it
+  // hasn't been marked done.
+  function getCompletion(index, room, dateStr) {
+    return index.get(`${room}|${dateStr}`) || null;
+  }
+
   global.RosterLogic = {
     parseDateStr,
     toDateStr,
     isWeekday,
     getAssignmentsForDate,
     getAssignmentForFloor,
+    buildCompletionsIndex,
+    getCompletion,
   };
 })(window);

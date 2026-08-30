@@ -16,6 +16,7 @@
   let roomsData = null;
   let tasksData = null;
   let notesData = null;
+  let completionsIndex = new Map();
   const now = new Date();
   let viewYear = now.getUTCFullYear();
   let viewMonth = now.getUTCMonth(); // 0-indexed
@@ -25,6 +26,8 @@
   const floorColumns = document.getElementById("floorColumns");
   const taskGrid = document.getElementById("taskGrid");
   const notesList = document.getElementById("notesList");
+  const todayStatusList = document.getElementById("todayStatusList");
+  const reportLinkWrap = document.getElementById("reportLinkWrap");
 
   function todayStr() {
     return window.RosterLogic.toDateStr(
@@ -37,6 +40,18 @@
   function floorShortLabel(floorName) {
     const match = floorName.match(/\d+/);
     return match ? `${match[0]}F` : floorName.charAt(0).toUpperCase();
+  }
+
+  // completions.json timestamps have no timezone suffix -- they're the
+  // Google Sheet's local time as-is (see data/README.md: the Sheet
+  // should be set to the barracks' local timezone). A timezone-less
+  // ISO string is parsed by JS as local time in whatever timezone the
+  // browser itself is in, which lines up correctly as long as whoever's
+  // viewing the site is in the same timezone as the barracks.
+  function formatTime(isoTimestamp) {
+    const d = new Date(isoTimestamp);
+    if (isNaN(d.getTime())) return isoTimestamp;
+    return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
   }
 
   function renderCalendar() {
@@ -82,9 +97,13 @@
           const list = document.createElement("div");
           list.className = "duty-list";
           assignments.forEach((a, i) => {
+            const completion = a.room ? window.RosterLogic.getCompletion(completionsIndex, a.room, dateStr) : null;
+
             const row = document.createElement("div");
-            row.className = `room-assignment floor-${(i % 3) + 1}`;
-            row.title = `${a.floor}${a.room ? " — Room " + a.room : " — no assignment"}`;
+            row.className = `room-assignment floor-${(i % 3) + 1}` + (completion ? " is-done" : "");
+            row.title = completion
+              ? `${a.floor} — Room ${a.room} — marked done at ${formatTime(completion.timestamp)}`
+              : `${a.floor}${a.room ? " — Room " + a.room : " — no assignment"}`;
 
             const tag = document.createElement("span");
             tag.className = "floor-tag";
@@ -95,6 +114,13 @@
             num.className = "room-num";
             num.textContent = a.room || "—";
             row.appendChild(num);
+
+            if (completion) {
+              const check = document.createElement("span");
+              check.className = "done-check";
+              check.textContent = "✓";
+              row.appendChild(check);
+            }
 
             list.appendChild(row);
           });
@@ -135,6 +161,38 @@
       wrap.appendChild(ul);
       floorColumns.appendChild(wrap);
     });
+  }
+
+  function renderTodayStatus() {
+    if (!todayStatusList) return;
+    todayStatusList.innerHTML = "";
+    const todayString = todayStr();
+    const assignments = window.RosterLogic.getAssignmentsForDate(todayString, roomsData);
+    const anyAssigned = assignments.some((a) => a.room);
+
+    if (!anyAssigned) {
+      todayStatusList.innerHTML = `<li class="empty-state">No duty today — weekend, or rotation hasn't started yet.</li>`;
+      return;
+    }
+
+    assignments.forEach((a) => {
+      const completion = a.room ? window.RosterLogic.getCompletion(completionsIndex, a.room, todayString) : null;
+      const li = document.createElement("li");
+      li.className = "today-status-row" + (completion ? " is-done" : " is-pending");
+      li.innerHTML = completion
+        ? `<strong>${a.floor} — Room ${a.room}:</strong> ✓ Done at ${formatTime(completion.timestamp)}`
+        : `<strong>${a.floor} — Room ${a.room}:</strong> Not yet marked done`;
+      todayStatusList.appendChild(li);
+    });
+  }
+
+  function renderReportLink(formUrl) {
+    if (!reportLinkWrap) return;
+    if (formUrl) {
+      reportLinkWrap.innerHTML = `<a class="report-duty-btn" href="${formUrl}" target="_blank" rel="noopener">Report your floor's duty as complete &rarr;</a>`;
+    } else {
+      reportLinkWrap.innerHTML = "";
+    }
   }
 
   function renderTasks() {
@@ -187,11 +245,15 @@
     fetch("rooms.json").then((r) => r.json()),
     fetch("tasks.json").then((r) => r.json()),
     fetch("notes.json").then((r) => r.json()),
+    fetch("completions.json").then((r) => r.json()),
   ])
-    .then(([rooms, tasks, notes]) => {
+    .then(([rooms, tasks, notes, completions]) => {
       roomsData = rooms;
       tasksData = tasks;
       notesData = notes;
+      completionsIndex = window.RosterLogic.buildCompletionsIndex(completions);
+      renderReportLink(completions.formUrl);
+      renderTodayStatus();
       renderCalendar();
       renderFloors();
       renderTasks();

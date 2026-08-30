@@ -13,7 +13,10 @@ ones can be added over time without touching existing ones — see
   assignment across all rooms on 3 floors. Each floor runs its own
   independent rotation through its own room list, one room per floor per
   weekday (Mon–Fri); also shows the weekly task checklist and standing
-  notes from the posted paper roster.
+  notes from the posted paper roster. Residents can mark their floor's
+  duty complete via a linked Google Form (no login required), which shows
+  up on the roster and the dashboard as a checkmark and timestamp —
+  anonymous by design, room + time only, no names.
 
 The homepage (`index.html`) shows a quick "today's cleaning duty" / "next
 event" summary and links out to every registered module (via
@@ -28,6 +31,17 @@ Action converts them and publishes the result within about a minute. See
 [`data/README.md`](data/README.md) for the exact format and, importantly,
 what to review before publishing anything sourced from an official system.
 
+## Duty-completion tracking
+
+`modules/roster/completions.json` is generated on an **hourly schedule**
+(`.github/workflows/sync-completions.yml` running `scripts/sync_completions.py`)
+by pulling responses from a Google Form linked to a published Google
+Sheet — this is a separate pipeline from the CSV sync above, since it
+runs on a timer rather than only on a commit. See the
+[`completions-config.json` section of `data/README.md`](data/README.md#completions-configjson--letting-residents-mark-their-duty-done)
+for the full one-time Google Form/Sheet setup walkthrough; until that's
+done, the site simply shows no checkmarks and hides the report button.
+
 ## Project structure
 
 ```
@@ -35,13 +49,19 @@ index.html               Dashboard — module grid + today's summary
 modules.json              Registry of modules shown on the dashboard
 assets/css/style.css      Shared styling for all pages
 assets/js/dashboard.js    Dashboard logic
-data/                     Editable CSV data + the sync pipeline's docs
+data/                     Editable CSV/JSON data + the sync pipelines' docs
   roster.csv               Room/floor list
   roster-config.json        Rotation start date
+  roster-tasks.csv          Weekly cleaning checklist by weekday
+  roster-notes.json         Standing notes shown on the roster page
+  completions-config.json   Google Form/Sheet links for duty tracking
   events.csv                Calendar events
-scripts/build_data.py     Converts data/*.csv into modules/*/*.json
+scripts/
+  build_data.py            Converts data/*.csv,*.json into modules/*/*.json
+  sync_completions.py      Pulls Form responses into completions.json
 .github/workflows/
   sync-data.yml            Runs build_data.py automatically on push
+  sync-completions.yml     Runs sync_completions.py hourly + on push
 modules/
   calendar/
     index.html
@@ -50,8 +70,11 @@ modules/
   roster/
     index.html
     roster.js
-    roster-logic.js       Shared rotation logic (used by dashboard too)
+    roster-logic.js       Shared rotation + completion logic (used by dashboard too)
     rooms.json            Generated — don't edit directly
+    tasks.json            Generated — don't edit directly
+    notes.json            Generated — don't edit directly
+    completions.json      Generated — don't edit directly
 ```
 
 ## Running locally

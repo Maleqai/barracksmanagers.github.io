@@ -31,7 +31,17 @@
 
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="calendar-grid" id="calendarGrid"></div>
-      <p class="empty-state" style="margin-top:0.5rem;">Weekends have no cleaning assignment. Each weekday shows the one room on duty that day.</p>
+      <p class="empty-state" style="margin-top:0.5rem;">Weekends have no cleaning assignment. Each weekday shows the room on duty that day, per floor — top to bottom: Floor 1, Floor 2, Floor 3 (also color-coded by the left edge of each room number on smaller screens).</p>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h2 class="section-title">Weekly task checklist</h2>
+      <div class="floor-columns" id="taskGrid"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h2 class="section-title">Notes</h2>
+      <ul class="notes-list" id="notesList"></ul>
     </div>
 
     <div class="card">
@@ -41,7 +51,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>Edit <code>rooms.json</code> in this module's folder to change room numbers, floors, or the rotation start date.</p>
+    <p>This roster is generated from <code>data/roster.csv</code>, <code>data/roster-config.json</code>, <code>data/roster-tasks.csv</code>, and <code>data/roster-notes.json</code> — edit those, not the files in this folder.</p>
   </footer>
 
   <script src="roster-logic.js"></script>

@@ -1,0 +1,4 @@
+{
+  "_comment": "rotationStart should be a Monday. Every floor's rotation is counted from this same date, independently, through that floor's own room list in data/roster.csv -- so on rotationStart itself, each floor is on the first room listed for it, and 5, 10, 15... weekdays later it's back to that first room (once its list length divides evenly, e.g. every 14 weekdays for a 14-room floor). Set to the Monday your currently-posted paper roster starts from, so the site matches it exactly.",
+  "rotationStart": "2026-08-03"
+}

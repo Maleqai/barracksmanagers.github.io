@@ -8,35 +8,50 @@ ones can be added over time without touching existing ones — see
 ## Current modules
 
 - **📅 Event Calendar** (`modules/calendar/`) — month-view calendar of
-  upcoming inspections, drills, meetings, and other events. Edit
-  `modules/calendar/events.json` to add or change events.
+  upcoming inspections, drills, meetings, and other events.
 - **🧹 Cleaning Roster** (`modules/roster/`) — a rotating weekday cleaning
-  assignment across all rooms on 3 floors. One room is on duty per weekday
-  (Mon–Fri); the rotation cycles through every room across all floors, then
-  repeats. Edit `modules/roster/rooms.json` to change room numbers, floors,
-  or the rotation's start date.
+  assignment across all rooms on 3 floors. Each floor runs its own
+  independent rotation through its own room list, one room per floor per
+  weekday (Mon–Fri); also shows the weekly task checklist and standing
+  notes from the posted paper roster.
 
 The homepage (`index.html`) shows a quick "today's cleaning duty" / "next
 event" summary and links out to every registered module (via
 `modules.json`).
 
+## Updating the roster or calendar
+
+Don't hand-edit `modules/roster/rooms.json` or `modules/calendar/events.json`
+directly — they're generated automatically. Instead, edit the plain CSV
+files in [`data/`](data/README.md) and push/upload the change; a GitHub
+Action converts them and publishes the result within about a minute. See
+[`data/README.md`](data/README.md) for the exact format and, importantly,
+what to review before publishing anything sourced from an official system.
+
 ## Project structure
 
 ```
-index.html              Dashboard — module grid + today's summary
-modules.json             Registry of modules shown on the dashboard
-assets/css/style.css     Shared styling for all pages
-assets/js/dashboard.js   Dashboard logic
+index.html               Dashboard — module grid + today's summary
+modules.json              Registry of modules shown on the dashboard
+assets/css/style.css      Shared styling for all pages
+assets/js/dashboard.js    Dashboard logic
+data/                     Editable CSV data + the sync pipeline's docs
+  roster.csv               Room/floor list
+  roster-config.json        Rotation start date
+  events.csv                Calendar events
+scripts/build_data.py     Converts data/*.csv into modules/*/*.json
+.github/workflows/
+  sync-data.yml            Runs build_data.py automatically on push
 modules/
   calendar/
     index.html
     calendar.js
-    events.json          Editable event data
+    events.json           Generated — don't edit directly
   roster/
     index.html
     roster.js
     roster-logic.js       Shared rotation logic (used by dashboard too)
-    rooms.json            Editable room/floor data
+    rooms.json            Generated — don't edit directly
 ```
 
 ## Running locally

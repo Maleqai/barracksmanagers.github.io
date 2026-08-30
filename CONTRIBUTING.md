@@ -35,9 +35,19 @@ existing modules. Each module is self-contained folder under `modules/`.
 
 - **No build step.** Everything is plain HTML/CSS/JS so it deploys straight
   to GitHub Pages. Keep new modules build-free too.
-- **Editable data lives in JSON files**, not hardcoded in JS, so anyone can
+- **Editable data lives in files, not hardcoded in JS**, so anyone can
   update schedules/rosters/events by editing a file and committing — no code
-  changes required for routine updates.
+  changes required for routine updates. Prefer the CSV-in/JSON-out pattern
+  used by the roster and calendar modules (`data/*.csv` -> a script in
+  `scripts/` -> `modules/<id>/*.json`, wired into
+  `.github/workflows/sync-data.yml`) for any module a non-technical person
+  will maintain — it keeps updates to "edit a spreadsheet" instead of
+  "hand-edit JSON," and gives you a place to validate input and document
+  what should (and shouldn't) go in it. See `data/README.md` for the
+  existing example. A module whose data rarely changes, or is only ever
+  edited by someone comfortable with JSON, can just keep a plain JSON file
+  instead — it's the module's own JS reading it, so it does not need to
+  match this pattern.
 - **Shared look and feel**: use the CSS classes already defined in
   `assets/css/style.css` (`.card`, `.section-title`, `.month-nav`,
   `.calendar-grid`, `.day-cell`, `.event-list`, etc.) rather than

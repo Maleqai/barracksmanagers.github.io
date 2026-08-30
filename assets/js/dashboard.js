@@ -38,21 +38,22 @@
     fetch("modules/roster/rooms.json")
       .then((r) => r.json())
       .then((data) => {
-        const assignment = window.RosterLogic
-          ? window.RosterLogic.getAssignment(todayStr(), data)
-          : null;
-        const roomEl = document.getElementById("todayRoom");
-        const subEl = document.getElementById("todayRoomSub");
-        if (assignment) {
-          roomEl.textContent = `Room ${assignment.room}`;
-          subEl.textContent = assignment.floor;
+        const list = document.getElementById("todayDuty");
+        const assignments = window.RosterLogic
+          ? window.RosterLogic.getAssignmentsForDate(todayStr(), data)
+          : [];
+        const assigned = assignments.filter((a) => a.room);
+
+        if (assigned.length > 0) {
+          list.innerHTML = assigned
+            .map((a) => `<li><strong>${a.floor}:</strong> Room ${a.room}</li>`)
+            .join("");
         } else {
-          roomEl.textContent = "No duty today";
-          subEl.textContent = "Weekend, or rotation hasn't started yet";
+          list.innerHTML = `<li>No duty today — weekend, or rotation hasn't started yet.</li>`;
         }
       })
       .catch(() => {
-        document.getElementById("todayRoom").textContent = "Unavailable";
+        document.getElementById("todayDuty").innerHTML = "<li>Unavailable</li>";
       });
   }
 

@@ -4,9 +4,12 @@
    so the "today's duty" widget on the homepage and the full
    roster module always agree.
 
-   Rotation rule: one room, cycling through every room across
-   all floors in order, assigned to exactly one weekday
-   (Mon–Fri) at a time. Weekends have no assignment.
+   Rotation rule: each floor runs its OWN independent rotation
+   through its own room list (data/roster.csv), one room per
+   weekday (Mon–Fri), all counted from the same rotationStart
+   date. So a given weekday has one assigned room per floor —
+   e.g. Floor 1 room 101, Floor 2 room 201, Floor 3 room 301 all
+   on the same Monday. Weekends have no assignment on any floor.
    ============================================================ */
 
 (function (global) {
@@ -31,13 +34,6 @@
     return dow >= 1 && dow <= 5;
   }
 
-  function getRotationList(data) {
-    if (Array.isArray(data.rotationOrder) && data.rotationOrder.length > 0) {
-      return data.rotationOrder;
-    }
-    return data.floors.flatMap((f) => f.rooms);
-  }
-
   // Number of weekdays strictly between `start` and `target`
   // (both UTC-midnight Dates, target >= start). start itself
   // counts as index 0.
@@ -51,33 +47,34 @@
     return count;
   }
 
-  function findFloorForRoom(room, floors) {
-    const floor = floors.find((f) => f.rooms.includes(room));
-    return floor ? floor.name : "";
+  // Returns an array, one entry per floor: { floor, room } —
+  // room is null if the date is a weekend, before rotationStart,
+  // or that floor has no rooms configured.
+  function getAssignmentsForDate(dateStr, data) {
+    const target = parseDateStr(dateStr);
+    const weekday = isWeekday(target);
+    const start = parseDateStr(data.rotationStart);
+    const started = target.getTime() >= start.getTime();
+    const idx = weekday && started ? weekdayIndexSince(start, target) : null;
+
+    return data.floors.map((floor) => {
+      if (idx === null || floor.rooms.length === 0) {
+        return { floor: floor.name, room: null };
+      }
+      return { floor: floor.name, room: floor.rooms[idx % floor.rooms.length] };
+    });
   }
 
-  // Returns { room, floor } or null if the date is a weekend,
-  // or before rotationStart.
-  function getAssignment(dateStr, data) {
-    const target = parseDateStr(dateStr);
-    if (!isWeekday(target)) return null;
-
-    const start = parseDateStr(data.rotationStart);
-    if (target.getTime() < start.getTime()) return null;
-
-    const rotation = getRotationList(data);
-    if (rotation.length === 0) return null;
-
-    const idx = weekdayIndexSince(start, target) % rotation.length;
-    const room = rotation[idx];
-    return { room, floor: findFloorForRoom(room, data.floors) };
+  // Convenience: just this one floor's assignment for a date.
+  function getAssignmentForFloor(dateStr, data, floorName) {
+    return getAssignmentsForDate(dateStr, data).find((a) => a.floor === floorName) || null;
   }
 
   global.RosterLogic = {
     parseDateStr,
     toDateStr,
     isWeekday,
-    getRotationList,
-    getAssignment,
+    getAssignmentsForDate,
+    getAssignmentForFloor,
   };
 })(window);

@@ -130,6 +130,24 @@ main {
   margin-top: 0.3rem;
 }
 
+.duty-summary {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.duty-summary li {
+  font-size: 1.05rem;
+  color: var(--olive-dark);
+}
+
+.duty-summary li strong {
+  color: var(--ink);
+}
+
 .module-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -228,7 +246,7 @@ main {
 }
 
 .day-cell {
-  min-height: 84px;
+  min-height: 108px;
   min-width: 0;
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -291,7 +309,35 @@ main {
   background: var(--tan-light);
   border-radius: 4px;
   padding: 0.1rem 0.3rem;
-  display: inline-block;
+  border-left: 3px solid var(--olive);
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.room-assignment.floor-1 { border-left-color: var(--olive); }
+.room-assignment.floor-2 { border-left-color: var(--accent); }
+.room-assignment.floor-3 { border-left-color: var(--olive-light); }
+
+.room-assignment .floor-tag {
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
+.room-assignment .room-num {
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.duty-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .detail-panel {
@@ -378,6 +424,29 @@ main {
   font-size: 0.9rem;
 }
 
+.notes-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.notes-list li {
+  font-size: 0.9rem;
+  color: var(--ink);
+  padding-left: 1rem;
+  position: relative;
+}
+
+.notes-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--olive);
+}
+
 .site-footer {
   text-align: center;
   color: var(--ink-muted);
@@ -396,10 +465,15 @@ main {
   }
 
   .day-cell {
-    min-height: 56px;
+    min-height: 78px;
     padding: 0.2rem;
     font-size: 0.68rem;
     border-radius: 5px;
+    gap: 1px;
+  }
+
+  .duty-list {
+    gap: 1px;
   }
 
   .day-cell .date-num {
@@ -412,7 +486,14 @@ main {
 
   .room-assignment {
     font-size: 0.62rem;
-    padding: 0.05rem 0.2rem;
+    padding: 0.05rem 0.2rem 0.05rem 0.35rem;
+  }
+
+  /* Room numbers, not the "1F"/"2F" labels, are what fits on a phone
+     screen -- the colored left border on .room-assignment still marks
+     which floor each line is. See the legend under the calendar. */
+  .room-assignment .floor-tag {
+    display: none;
   }
 
   .calendar-grid .dow {

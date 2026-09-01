@@ -1,0 +1,52 @@
+name: Sync duty completions
+
+# Pulls "duty complete" confirmations from the Google Form's published
+# response sheet on a schedule and publishes modules/roster/completions.json.
+# Runs even if data/completions-config.json's URL is still empty -- it just
+# writes an empty completions list until that's filled in.
+#
+# Also runs whenever the roster data changes, since a change there can shift
+# which room a past submission actually maps to.
+
+on:
+  schedule:
+    # Hourly, at the top of the hour (UTC). GitHub may delay a scheduled
+    # run by a few minutes under load -- that's fine for this use case.
+    - cron: "0 * * * *"
+  push:
+    branches: [main]
+    paths:
+      - "data/completions-config.json"
+      - "modules/roster/rooms.json"
+      - "scripts/sync_completions.py"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Sync completions from the published Sheet
+        run: python3 scripts/sync_completions.py
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name "barracks-data-sync[bot]"
+          git config user.email "actions@users.noreply.github.com"
+          if git diff --quiet -- modules/roster/completions.json; then
+            echo "No changes to publish."
+          else
+            git add modules/roster/completions.json
+            git commit -m "Sync duty completions [automated]"
+            git push
+          fi

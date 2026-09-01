@@ -1,0 +1,47 @@
+name: Sync data (CSV -> site JSON)
+
+# Whenever the CSV/config files in data/ change, regenerate the JSON files
+# the site actually reads and commit them back. This means updating the
+# roster or calendar is just: edit/upload a CSV in data/, commit -- no
+# hand-editing of JSON required.
+#
+# Also runnable manually from the Actions tab (workflow_dispatch), e.g.
+# after changing scripts/build_data.py itself.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "scripts/build_data.py"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build JSON from CSV data
+        run: python3 scripts/build_data.py
+
+      - name: Commit and push if anything changed
+        run: |
+          git config user.name "barracks-data-sync[bot]"
+          git config user.email "actions@users.noreply.github.com"
+          if git diff --quiet -- modules/roster/rooms.json modules/roster/tasks.json modules/roster/notes.json modules/calendar/events.json; then
+            echo "No changes to publish."
+          else
+            git add modules/roster/rooms.json modules/roster/tasks.json modules/roster/notes.json modules/calendar/events.json
+            git commit -m "Sync site data from CSV [automated]"
+            git push
+          fi

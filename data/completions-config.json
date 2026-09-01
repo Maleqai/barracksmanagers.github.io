@@ -1,5 +1,5 @@
 {
   "_comment": "Fill both of these in after you've set up the Google Form + Sheet (see data/README.md for the exact steps). Leave them as empty strings until then -- the sync script will just publish an empty completions list, and the site will hide the 'report your duty' link, rather than failing.",
-  "formUrl": "https://forms.gle/vW2ro9ufaEovwPYj7",
-  "formResponsesCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2vuWoiAGi9beU8F6oCiw-ZeMcjfurqeCkspYYO_hbR0XRxZxEpBMzAWyHr2SqApLAe6vboWQfX7wP/pub?gid=270617576&single=true&output=csv"
+  "formUrl": "",
+  "formResponsesCsvUrl": ""
 }

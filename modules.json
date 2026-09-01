@@ -12,5 +12,12 @@
     "description": "Rotating weekday cleaning assignment across all rooms on 3 floors.",
     "icon": "🧹",
     "path": "modules/roster/index.html"
+  },
+  {
+    "id": "sop",
+    "name": "Barracks SOP",
+    "description": "Search the Barracks Standard Operating Procedures for specific rules and policies.",
+    "icon": "📖",
+    "path": "modules/sop/index.html"
   }
 ]

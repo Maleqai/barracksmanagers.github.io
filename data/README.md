@@ -173,6 +173,66 @@ room on duty that day (weekends and dates before `rotationStart` are
 ignored), so a resident submitting on the wrong day just gets quietly
 skipped rather than showing a false checkmark on some other room.
 
+## `sop-content.json` — the searchable Barracks SOP
+
+This is the source for the "Barracks SOP" module (`modules/sop/`), which
+renders the full SOP text on the site and lets residents search it by
+keyword. Structure:
+
+```json
+{
+  "title": "...",
+  "sourceDoc": "... memo number/date, shown under the title ...",
+  "references": ["AR 420-1, ...", "..."],
+  "sections": [
+    {
+      "id": "unique-anchor-id",
+      "heading": "6. Standards",
+      "text": "optional single paragraph",
+      "items": ["optional", "bullet", "list"],
+      "children": [ /* nested nodes, same shape, for sub-sections */ ]
+    }
+  ],
+  "buildings": {
+    "note": "optional caption shown above the building list",
+    "areaMapImage": "assets/some-map.jpg",
+    "list": [
+      { "building": "25412", "unit": "...", "placardImage": "assets/some-placard.jpg" }
+    ]
+  }
+}
+```
+
+Every node (each entry in `sections`, and each entry in its optional
+`children`) needs a unique `id` (used as the page anchor a search result
+jumps to) and a `heading`, plus at least one of `text`, `items`, or
+`children`. `scripts/build_data.py` validates all of this -- duplicate or
+missing ids, empty headings, etc. all fail the build with a specific
+error rather than silently publishing something broken.
+
+To edit the SOP's wording: find the relevant node by its `heading` and
+edit its `text`/`items` directly in GitHub's web editor, then commit --
+same flow as any other data file (see below). To add a brand new
+sub-section, copy an existing node's shape (`id`, `heading`, and
+`text`/`items`) and add it to the right `children` array.
+
+Images referenced by `placardImage` / `areaMapImage` (paths relative to
+`modules/sop/`) live directly in `modules/sop/assets/` -- they're
+committed as-is, not generated, so add/replace files there directly if
+you need to update a placard or the area map.
+
+**What was already reviewed and generalized from the source PDF:** the
+SOP memo's original Point of Contact block named a specific individual
+along with their personal duty phone number and `.mil` email address --
+that's been generalized on the site to "contact your Barracks Manager,
+Floor Manager, or First Sergeant" instead, since a public website is a
+much wider audience than the memo's original one. The building/unit
+association from Annex B and Annex D (the aerial map) was kept as-is at
+the barracks manager's request. If you update this file from a newer
+version of the source SOP, re-check whether it introduces any new named
+individual's personal contact info, and generalize that the same way --
+same review standard as the roster/calendar data above.
+
 ## How an update actually reaches the live site
 
 1. Edit the relevant CSV (Excel, Google Sheets, or a text editor all
@@ -182,10 +242,11 @@ skipped rather than showing a false checkmark on some other room.
    directly in GitHub's web editor -- click the file, then the pencil
    icon). Commit the change.
 3. That commit automatically triggers the "Sync data" GitHub Action,
-   which regenerates `modules/roster/rooms.json` and
-   `modules/calendar/events.json` and commits them back -- usually
-   within a minute. GitHub Pages then rebuilds the live site
-   automatically, same as any other commit.
+   which regenerates `modules/roster/rooms.json`,
+   `modules/roster/tasks.json`, `modules/roster/notes.json`,
+   `modules/calendar/events.json`, and `modules/sop/sop.json`, and
+   commits them back -- usually within a minute. GitHub Pages then
+   rebuilds the live site automatically, same as any other commit.
 4. You can watch progress under the repo's **Actions** tab. A red X
    means something in the CSV was invalid -- click into the failed run
    to see exactly which file/line/field caused it; nothing gets

@@ -17,6 +17,11 @@ ones can be added over time without touching existing ones — see
   duty complete via a linked Google Form (no login required), which shows
   up on the roster and the dashboard as a checkmark and timestamp —
   anonymous by design, room + time only, no names.
+- **📖 Barracks SOP** (`modules/sop/`) — the full Barracks Standard
+  Operating Procedures, searchable by keyword, with jump-to-section
+  results. Generated from `data/sop-content.json`; see that file's
+  section in [`data/README.md`](data/README.md) for how to edit it and
+  what was reviewed/generalized before publishing.
 
 The homepage (`index.html`) shows a quick "today's cleaning duty" / "next
 event" summary and links out to every registered module (via
@@ -56,6 +61,7 @@ data/                     Editable CSV/JSON data + the sync pipelines' docs
   roster-notes.json         Standing notes shown on the roster page
   completions-config.json   Google Form/Sheet links for duty tracking
   events.csv                Calendar events
+  sop-content.json          Full Barracks SOP text, structured for search
 scripts/
   build_data.py            Converts data/*.csv,*.json into modules/*/*.json
   sync_completions.py      Pulls Form responses into completions.json
@@ -75,6 +81,11 @@ modules/
     tasks.json            Generated — don't edit directly
     notes.json            Generated — don't edit directly
     completions.json      Generated — don't edit directly
+  sop/
+    index.html
+    sop.js                Renders the SOP text and powers the keyword search
+    sop.json              Generated — don't edit directly
+    assets/               Annex B/D images, committed as-is (not generated)
 ```
 
 ## Running locally

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barracks SOP — Barracks Manager Automation</title>
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <h1>📖 Barracks SOP</h1>
+        <p class="tagline">Search the Barracks Standard Operating Procedures</p>
+      </div>
+      <nav><a href="../../index.html">Dashboard</a></nav>
+    </div>
+  </header>
+
+  <main>
+    <a class="back-link" href="../../index.html">&larr; Back to dashboard</a>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h2 class="section-title" id="sopTitle">Barracks SOP</h2>
+      <p class="empty-state" id="sopSourceDoc" style="margin-top:-0.4rem;"></p>
+
+      <div class="sop-search-wrap">
+        <input
+          type="search"
+          id="sopSearch"
+          class="sop-search-input"
+          placeholder="Search the SOP -- e.g. &quot;visiting hours&quot;, &quot;alcohol&quot;, &quot;fire&quot;, &quot;pets&quot;"
+          autocomplete="off"
+        />
+        <p class="sop-search-hint" id="sopSearchHint"></p>
+      </div>
+
+      <ul class="sop-results-list" id="sopResults" hidden></ul>
+    </div>
+
+    <div class="card" id="sopOutlineCard">
+      <h2 class="section-title">Full text</h2>
+      <div id="sopOutline"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>This page is generated from <code>data/sop-content.json</code> -- edit that file, not this one. Some contact and location details from the source document were intentionally generalized before publishing; see <code>data/README.md</code>.</p>
+  </footer>
+
+  <script src="sop.js"></script>
+</body>
+</html>

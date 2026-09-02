@@ -1,0 +1,7 @@
+{
+  "_comment": "Area beautification (lawn care) rotation. anchorDate is the first (or a known) occurrence -- YYYY-MM-DD, doesn't need to be a Monday. intervalDays is the gap between occurrences (14 = every 2 weeks). startTime is 24-hour HH:MM, shown on the site but not used in the date math (occurrences are tracked by day, not by time of day). roomsPerDraw is how many rooms get picked each occurrence. The room pool is pulled automatically from data/roster.csv (all floors combined) -- there's no separate room list to maintain here.",
+  "anchorDate": "2026-09-11",
+  "startTime": "07:00",
+  "intervalDays": 14,
+  "roomsPerDraw": 5
+}

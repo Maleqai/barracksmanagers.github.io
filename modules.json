@@ -19,5 +19,12 @@
     "description": "Search the Barracks Standard Operating Procedures for specific rules and policies.",
     "icon": "📖",
     "path": "modules/sop/index.html"
+  },
+  {
+    "id": "beautification",
+    "name": "Area Beautification",
+    "description": "Every 2 weeks, 5 rooms are picked for lawn care/beautification duty, with a one-cycle cooldown.",
+    "icon": "🌱",
+    "path": "modules/beautification/index.html"
   }
 ]

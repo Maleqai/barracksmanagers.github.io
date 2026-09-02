@@ -81,6 +81,47 @@ date,title,description,type
 To add an event, add a row (any order -- they get sorted automatically).
 To remove one, delete its row.
 
+## `beautification-config.json` — area beautification (lawn care) rotation
+
+Four settings:
+
+```json
+{
+  "anchorDate": "2026-09-11",
+  "startTime": "07:00",
+  "intervalDays": 14,
+  "roomsPerDraw": 5
+}
+```
+
+- `anchorDate`: any known occurrence date (`YYYY-MM-DD`) -- doesn't need
+  to be a Monday, and doesn't need to be the very first one that ever
+  happened, just one real date on the schedule. Every other occurrence is
+  calculated from this one.
+- `startTime`: 24-hour `HH:MM`, just for display -- occurrences are
+  tracked by date, not time of day.
+- `intervalDays`: gap between occurrences (`14` = every 2 weeks).
+- `roomsPerDraw`: how many rooms get picked each occurrence.
+
+There's no separate room list here -- the pool of eligible rooms is
+pulled automatically from `roster.csv` (all floors combined), so it
+always matches the actual current room list.
+
+**How the picking works:** each occurrence, 5 rooms are picked at random
+from every room *except* the 5 picked at the previous occurrence (a
+one-cycle/2-week cooldown, so nobody gets picked twice in a row). Because
+this is a static site with no database, there's nowhere to actually store
+"which rooms were picked last time" -- instead, the site recomputes the
+*entire* history from `anchorDate` forward, every time anyone loads the
+page, using a seeded random-number generator. Given the same config, that
+always produces the exact same sequence of picks for the exact same
+dates, so every resident's browser shows identical results without any
+of them needing to talk to each other or a server. If you ever change
+`anchorDate`, the whole schedule reshuffles from scratch.
+
+To change how many rooms get picked, or how often, just edit the numbers
+above and commit -- no code changes needed.
+
 ## `completions-config.json` — letting residents mark their duty done
 
 This powers the checkmarks on the roster page: residents fill out a
@@ -244,9 +285,10 @@ same review standard as the roster/calendar data above.
 3. That commit automatically triggers the "Sync data" GitHub Action,
    which regenerates `modules/roster/rooms.json`,
    `modules/roster/tasks.json`, `modules/roster/notes.json`,
-   `modules/calendar/events.json`, and `modules/sop/sop.json`, and
-   commits them back -- usually within a minute. GitHub Pages then
-   rebuilds the live site automatically, same as any other commit.
+   `modules/calendar/events.json`, `modules/sop/sop.json`, and
+   `modules/beautification/config.json`, and commits them back --
+   usually within a minute. GitHub Pages then rebuilds the live site
+   automatically, same as any other commit.
 4. You can watch progress under the repo's **Actions** tab. A red X
    means something in the CSV was invalid -- click into the failed run
    to see exactly which file/line/field caused it; nothing gets

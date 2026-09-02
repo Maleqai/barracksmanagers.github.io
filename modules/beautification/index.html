@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Area Beautification — Barracks Manager Automation</title>
+  <link rel="stylesheet" href="../../assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div>
+        <h1>🌱 Area Beautification</h1>
+        <p class="tagline">Every 2 weeks — 5 rooms picked, with a one-cycle cooldown</p>
+      </div>
+      <nav><a href="../../index.html">Dashboard</a></nav>
+    </div>
+  </header>
+
+  <main>
+    <a class="back-link" href="../../index.html">&larr; Back to dashboard</a>
+
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h2 class="section-title">Next area beautification</h2>
+      <p class="value" id="beautNextDate">Loading…</p>
+      <p class="sub" id="beautNextTime"></p>
+      <div class="beaut-room-pills" id="beautNextRooms"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Upcoming schedule</h2>
+      <ul class="beaut-schedule-list" id="beautSchedule"></ul>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>The 5 rooms are picked automatically for each date -- every room has an equal chance except the 5 picked last time, which sit out one cycle (2 weeks) before becoming eligible again. The pick is deterministic (same for everyone who loads this page) and generated from <code>data/beautification-config.json</code> and the room list in <code>data/roster.csv</code> -- edit those, not this page, to change the schedule.</p>
+  </footer>
+
+  <script src="beautification-logic.js"></script>
+  <script src="beautification.js"></script>
+</body>
+</html>

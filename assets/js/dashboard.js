@@ -103,6 +103,36 @@
       });
   }
 
+  // "2026-09-11" -> "Fri, Sep 11"
+  function formatShortDate(dateStr) {
+    const d = new Date(dateStr + "T00:00:00Z");
+    const dow = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d.getUTCDay()];
+    const mon = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.getUTCMonth()];
+    return `${dow}, ${mon} ${d.getUTCDate()}`;
+  }
+
+  function renderNextBeautification() {
+    fetch("modules/beautification/config.json")
+      .then((r) => r.json())
+      .then((config) => {
+        const valueEl = document.getElementById("beautDate");
+        const subEl = document.getElementById("beautSub");
+        const roomsEl = document.getElementById("beautRooms");
+        const next = window.BeautificationLogic.getSchedule(config, todayStr(), 1)[0];
+
+        valueEl.textContent = formatShortDate(next.date);
+        subEl.textContent = `Starts at ${window.BeautificationLogic.formatTime(config.startTime)}`;
+        roomsEl.innerHTML = next.rooms
+          .slice()
+          .sort()
+          .map((r) => `<span class="beaut-mini-pill">${r}</span>`)
+          .join("");
+      })
+      .catch(() => {
+        document.getElementById("beautDate").textContent = "Unavailable";
+      });
+  }
+
   fetch("modules.json")
     .then((r) => r.json())
     .then(renderModuleGrid)
@@ -113,4 +143,5 @@
 
   renderTodayRoom();
   renderNextEvent();
+  renderNextBeautification();
 })();

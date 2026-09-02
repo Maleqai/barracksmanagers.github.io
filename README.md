@@ -22,6 +22,11 @@ ones can be added over time without touching existing ones — see
   results. Generated from `data/sop-content.json`; see that file's
   section in [`data/README.md`](data/README.md) for how to edit it and
   what was reviewed/generalized before publishing.
+- **🌱 Area Beautification** (`modules/beautification/`) — every 2 weeks,
+  5 rooms are picked for lawn-care/beautification duty, with a one-cycle
+  cooldown so nobody's picked twice in a row. The pick is deterministic
+  (identical for every visitor, no database needed) and shows both the
+  next occurrence and a few cycles of upcoming schedule.
 
 The homepage (`index.html`) shows a quick "today's cleaning duty" / "next
 event" summary and links out to every registered module (via
@@ -62,6 +67,7 @@ data/                     Editable CSV/JSON data + the sync pipelines' docs
   completions-config.json   Google Form/Sheet links for duty tracking
   events.csv                Calendar events
   sop-content.json          Full Barracks SOP text, structured for search
+  beautification-config.json  Area beautification schedule (anchor date, interval, room count)
 scripts/
   build_data.py            Converts data/*.csv,*.json into modules/*/*.json
   sync_completions.py      Pulls Form responses into completions.json
@@ -86,6 +92,11 @@ modules/
     sop.js                Renders the SOP text and powers the keyword search
     sop.json              Generated — don't edit directly
     assets/               Annex B/D images, committed as-is (not generated)
+  beautification/
+    index.html
+    beautification.js         Renders the module page
+    beautification-logic.js   Shared deterministic-draw logic (used by dashboard too)
+    config.json                Generated — don't edit directly
 ```
 
 ## Running locally

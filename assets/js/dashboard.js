@@ -1,15 +1,13 @@
-
-Dashboard · JS
 /* ============================================================
    Dashboard — renders the module grid from modules.json, and
    the "today's duty" / "next event" widgets by pulling from
    each module's own data files. Relies on window.RosterLogic
    (modules/roster/roster-logic.js) for the duty widget.
    ============================================================ */
- 
+
 (function () {
   "use strict";
- 
+
   function todayStr() {
     const now = new Date();
     const y = now.getUTCFullYear();
@@ -17,7 +15,7 @@ Dashboard · JS
     const d = String(now.getUTCDate()).padStart(2, "0");
     return `${y}-${m}-${d}`;
   }
- 
+
   function renderModuleGrid(modules) {
     const grid = document.getElementById("moduleGrid");
     if (modules.length === 0) {
@@ -35,14 +33,14 @@ Dashboard · JS
       )
       .join("");
   }
- 
+
   function formatTime(isoTimestamp) {
     // See modules/roster/roster.js for why no timezone conversion happens here.
     const d = new Date(isoTimestamp);
     if (isNaN(d.getTime())) return isoTimestamp;
     return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
   }
- 
+
   function renderTodayRoom() {
     Promise.all([
       fetch("modules/roster/rooms.json", { cache: "no-store" }).then((r) => r.json()),
@@ -58,7 +56,7 @@ Dashboard · JS
         const completionsIndex = window.RosterLogic
           ? window.RosterLogic.buildCompletionsIndex(completionsData)
           : new Map();
- 
+
         if (assigned.length > 0) {
           list.innerHTML = assigned
             .map((a) => {
@@ -72,7 +70,7 @@ Dashboard · JS
         } else {
           list.innerHTML = `<li>No duty today — weekend, or rotation hasn't started yet.</li>`;
         }
- 
+
         if (completionsData.formUrl) {
           list.innerHTML += `<li><a href="${completionsData.formUrl}" target="_blank" rel="noopener">Report your floor's duty &rarr;</a></li>`;
         }
@@ -81,7 +79,7 @@ Dashboard · JS
         document.getElementById("todayDuty").innerHTML = "<li>Unavailable</li>";
       });
   }
- 
+
   function renderNextEvent() {
     fetch("modules/calendar/events.json", { cache: "no-store" })
       .then((r) => r.json())
@@ -104,7 +102,7 @@ Dashboard · JS
         document.getElementById("nextEventTitle").textContent = "Unavailable";
       });
   }
- 
+
   // "2026-09-11" -> "Fri, Sep 11"
   function formatShortDate(dateStr) {
     const d = new Date(dateStr + "T00:00:00Z");
@@ -112,7 +110,7 @@ Dashboard · JS
     const mon = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.getUTCMonth()];
     return `${dow}, ${mon} ${d.getUTCDate()}`;
   }
- 
+
   function renderNextBeautification() {
     fetch("modules/beautification/config.json", { cache: "no-store" })
       .then((r) => r.json())
@@ -121,7 +119,7 @@ Dashboard · JS
         const subEl = document.getElementById("beautSub");
         const roomsEl = document.getElementById("beautRooms");
         const next = window.BeautificationLogic.getSchedule(config, todayStr(), 1)[0];
- 
+
         valueEl.textContent = formatShortDate(next.date);
         subEl.textContent = `Starts at ${window.BeautificationLogic.formatTime(config.startTime)}`;
         roomsEl.innerHTML = next.rooms
@@ -134,7 +132,7 @@ Dashboard · JS
         document.getElementById("beautDate").textContent = "Unavailable";
       });
   }
- 
+
   fetch("modules.json")
     .then((r) => r.json())
     .then(renderModuleGrid)
@@ -142,10 +140,8 @@ Dashboard · JS
       document.getElementById("moduleGrid").innerHTML =
         `<p class="empty-state">Couldn't load modules.json. If you're viewing this file directly from disk, serve it with a local web server instead — see the README.</p>`;
     });
- 
+
   renderTodayRoom();
   renderNextEvent();
   renderNextBeautification();
 })();
- 
-

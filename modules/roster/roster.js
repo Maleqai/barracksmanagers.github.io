@@ -242,10 +242,10 @@
   });
 
   Promise.all([
-    fetch("rooms.json").then((r) => r.json()),
-    fetch("tasks.json").then((r) => r.json()),
-    fetch("notes.json").then((r) => r.json()),
-    fetch("completions.json").then((r) => r.json()),
+    fetch("rooms.json", { cache: "no-store" }).then((r) => r.json()),
+    fetch("tasks.json", { cache: "no-store" }).then((r) => r.json()),
+    fetch("notes.json", { cache: "no-store" }).then((r) => r.json()),
+    fetch("completions.json", { cache: "no-store" }).then((r) => r.json()),
   ])
     .then(([rooms, tasks, notes, completions]) => {
       roomsData = rooms;

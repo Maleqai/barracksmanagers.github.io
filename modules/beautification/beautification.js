@@ -38,7 +38,7 @@
       .join("");
   }
 
-  fetch("config.json")
+  fetch("config.json", { cache: "no-store" })
     .then((r) => r.json())
     .then((config) => {
       const today = todayStr();

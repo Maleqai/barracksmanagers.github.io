@@ -165,7 +165,7 @@
     renderCalendar();
   });
 
-  fetch("events.json")
+  fetch("events.json", { cache: "no-store" })
     .then((r) => r.json())
     .then((data) => {
       events = data;

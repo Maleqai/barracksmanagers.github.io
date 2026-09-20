@@ -18,6 +18,8 @@
   --danger: #a13d3d;
   --success: #2e7d4f;
   --success-bg: #e3f0e7;
+  --warn: #b5651d;
+  --warn-bg: #faead7;
   --radius: 10px;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.12);
@@ -158,6 +160,12 @@ main {
 
 .duty-summary .mini-pending {
   color: var(--ink-muted);
+  font-size: 0.85rem;
+}
+
+.duty-summary .mini-unavailable {
+  color: var(--warn);
+  font-weight: 600;
   font-size: 0.85rem;
 }
 
@@ -355,9 +363,19 @@ main {
   border-left-color: var(--success);
 }
 
+.room-assignment.is-unavailable {
+  background: var(--warn-bg);
+  border-left-color: var(--warn);
+}
+
 .room-assignment .done-check {
   color: var(--success);
   font-weight: 700;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.room-assignment .unavailable-flag {
   margin-left: auto;
   flex-shrink: 0;
 }
@@ -447,6 +465,11 @@ main {
   font-weight: 700;
 }
 
+.floor-columns li.is-unavailable {
+  color: var(--warn);
+  font-weight: 700;
+}
+
 .empty-state {
   color: var(--ink-muted);
   font-style: italic;
@@ -480,6 +503,12 @@ main {
   color: var(--ink);
 }
 
+.today-status-row.is-unavailable {
+  background: var(--warn-bg);
+  border-color: var(--warn);
+  color: var(--olive-dark);
+}
+
 .report-duty-btn {
   display: inline-block;
   background: var(--accent);
@@ -493,6 +522,50 @@ main {
 
 .report-duty-btn:hover {
   opacity: 0.92;
+}
+
+.report-unavailable-btn {
+  display: inline-block;
+  background: var(--card-bg);
+  color: var(--warn);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.6rem 1.1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  border: 1.5px solid var(--warn);
+}
+
+.report-unavailable-btn:hover {
+  background: var(--warn-bg);
+}
+
+.unavailable-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.unavailable-row {
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border);
+  background: var(--tan-light);
+  color: var(--ink);
+}
+
+.unavailable-row.is-now {
+  background: var(--warn-bg);
+  border-color: var(--warn);
+}
+
+.unavailable-note {
+  color: var(--ink-muted);
+  font-style: italic;
 }
 
 .notes-list {
@@ -790,6 +863,12 @@ main {
      next to the room number at this width -- the green background and
      border on .is-done already signal "done" without it. */
   .room-assignment .done-check {
+    display: none;
+  }
+
+  /* Same reasoning again for the 🧳 unavailable glyph -- the warm
+     background and border on .is-unavailable already signal it. */
+  .room-assignment .unavailable-flag {
     display: none;
   }
 

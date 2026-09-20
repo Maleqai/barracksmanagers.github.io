@@ -214,6 +214,84 @@ room on duty that day (weekends and dates before `rotationStart` are
 ignored), so a resident submitting on the wrong day just gets quietly
 skipped rather than showing a false checkmark on some other room.
 
+## `unavailability-config.json` — flagging rooms on leave/TDY
+
+This powers the 🧳 flags on the dashboard and roster page: a resident
+whose room will be on leave or TDY fills out a **Google Form** with a
+start and end date, and the same kind of pipeline as
+`completions-config.json` above (`scripts/sync_unavailability.py`, run
+hourly by `.github/workflows/sync-unavailability.yml`) reads the linked
+Sheet and publishes `modules/roster/unavailability.json`. This is
+**informational only** — it flags the room so the floor manager can see
+it and make other arrangements; it does not skip or reassign that day's
+rotation. It only ever publishes room number, floor, and the date range
+— never who submitted it, matching the rest of this site.
+
+Until you set this up, `formUrl` and `formResponsesCsvUrl` should stay as
+empty strings (`""`). The sync script checks for that and just publishes
+an empty list instead of erroring, and the site quietly hides the
+"report leave/TDY unavailability" link/button. Nothing breaks by leaving
+this unset.
+
+### One-time setup (you'll need your own Google account)
+
+1. **Create the Form.** Go to [forms.google.com](https://forms.google.com)
+   and start a blank form. Give it a title like "Barracks — Report
+   Leave/TDY Unavailability."
+2. **Add exactly these questions:**
+   - A **required**, **short answer** question with this *exact* wording
+     (the sync script matches on it verbatim):
+     ```
+     Which room number will be unavailable?
+     ```
+     The sync script checks whatever's typed here against the real room
+     list in `roster.csv` and skips anything that doesn't match, so a
+     typo just gets quietly dropped rather than showing up wrong.
+   - A **required**, **Date** question with this *exact* wording:
+     ```
+     First day you'll be unavailable (leave/TDY start date)
+     ```
+   - A **required**, **Date** question with this *exact* wording:
+     ```
+     Last day you'll be unavailable (leave/TDY end date)
+     ```
+     Should cover the entire leave/TDY period, including travel days if
+     duty can't realistically happen then either.
+   - An **optional**, **short answer** question titled `Notes (optional)`
+     — same as the duty-completion form. Keep it to something postable
+     on a public site (see the review note at the top of this file) —
+     "block leave" or "TDY" is plenty, no need for specifics.
+   - Don't add a name/email question, same reasoning as the
+     duty-completion form above.
+3. **Link it to a Sheet, publish it, and get the Form link** — identical
+   steps 3–6 from the duty-completion walkthrough above (link to a new
+   Sheet via the Responses tab, set the Sheet's timezone, publish the
+   response tab to the web as CSV, and copy the Form's own shareable
+   link). Nothing about those steps is different here.
+4. **Fill in this file.** Edit `data/unavailability-config.json`:
+   ```json
+   {
+     "formUrl": "<the Form link>",
+     "formResponsesCsvUrl": "<the published CSV link>"
+   }
+   ```
+   Commit that change the same way as any other data update (see below).
+   Within an hour (or immediately if you manually run the "Sync
+   unavailability" workflow from the Actions tab), the roster page and
+   dashboard will start showing 🧳 flags and the report button will
+   appear.
+
+### Checking it's working
+
+Same pattern as duty completions: go to the repo's **Actions** tab and
+look for **"Sync unavailability"**. A red X usually means a question's
+wording doesn't match the `*_HEADER` constants in
+`scripts/sync_unavailability.py` exactly, or a room number was typed
+wrong on someone's submission — click into the failed run's log for
+specifics. An end date entered before the start date, or a room number
+that doesn't match `roster.csv`, gets a warning in the log and is
+skipped rather than breaking the whole sync.
+
 ## `sop-content.json` — the searchable Barracks SOP
 
 This is the source for the "Barracks SOP" module (`modules/sop/`), which
@@ -294,7 +372,8 @@ same review standard as the roster/calendar data above.
    to see exactly which file/line/field caused it; nothing gets
    published to the live site until it's fixed.
 
-(This is a separate, faster pipeline from the duty-completion sync above
--- that one runs on its own hourly schedule against a Google Sheet
-instead of a CSV you upload. See the `completions-config.json` section
-above for that setup.)
+(This is a separate, faster pipeline from the duty-completion and
+unavailability syncs above -- those each run on their own hourly
+schedule against a Google Sheet instead of a CSV you upload. See the
+`completions-config.json` and `unavailability-config.json` sections
+above for those setups.)

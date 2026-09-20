@@ -17,6 +17,8 @@
   let tasksData = null;
   let notesData = null;
   let completionsIndex = new Map();
+  let unavailabilityData = null;
+  let unavailabilityIndex = new Map();
   const now = new Date();
   let viewYear = now.getUTCFullYear();
   let viewMonth = now.getUTCMonth(); // 0-indexed
@@ -28,6 +30,8 @@
   const notesList = document.getElementById("notesList");
   const todayStatusList = document.getElementById("todayStatusList");
   const reportLinkWrap = document.getElementById("reportLinkWrap");
+  const unavailableList = document.getElementById("unavailableList");
+  const reportUnavailableWrap = document.getElementById("reportUnavailableWrap");
 
   function todayStr() {
     return window.RosterLogic.toDateStr(
@@ -52,6 +56,21 @@
     const d = new Date(isoTimestamp);
     if (isNaN(d.getTime())) return isoTimestamp;
     return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  }
+
+  // Notes come from a public, unauthenticated Google Form submission, so
+  // escape before dropping them into innerHTML (matches modules/sop/sop.js).
+  function escapeHtml(s) {
+    const div = document.createElement("div");
+    div.textContent = s;
+    return div.innerHTML;
+  }
+
+  // "2026-09-20" -> "Sep 20, 2026"
+  function formatDateShort(dateStr) {
+    const d = new Date(dateStr + "T00:00:00Z");
+    const mon = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.getUTCMonth()];
+    return `${mon} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
   }
 
   function renderCalendar() {
@@ -98,12 +117,19 @@
           list.className = "duty-list";
           assignments.forEach((a, i) => {
             const completion = a.room ? window.RosterLogic.getCompletion(completionsIndex, a.room, dateStr) : null;
+            const unavailable = a.room ? window.RosterLogic.getUnavailability(unavailabilityIndex, a.room, dateStr) : null;
 
             const row = document.createElement("div");
-            row.className = `room-assignment floor-${(i % 3) + 1}` + (completion ? " is-done" : "");
-            row.title = completion
-              ? `${a.floor} — Room ${a.room} — marked done at ${formatTime(completion.timestamp)}`
-              : `${a.floor}${a.room ? " — Room " + a.room : " — no assignment"}`;
+            row.className =
+              `room-assignment floor-${(i % 3) + 1}` +
+              (unavailable ? " is-unavailable" : completion ? " is-done" : "");
+            if (unavailable) {
+              row.title = `${a.floor} — Room ${a.room} — reported unavailable (leave/TDY) ${formatDateShort(unavailable.startDate)}–${formatDateShort(unavailable.endDate)}, can't complete duty`;
+            } else {
+              row.title = completion
+                ? `${a.floor} — Room ${a.room} — marked done at ${formatTime(completion.timestamp)}`
+                : `${a.floor}${a.room ? " — Room " + a.room : " — no assignment"}`;
+            }
 
             const tag = document.createElement("span");
             tag.className = "floor-tag";
@@ -115,7 +141,12 @@
             num.textContent = a.room || "—";
             row.appendChild(num);
 
-            if (completion) {
+            if (unavailable) {
+              const flag = document.createElement("span");
+              flag.className = "unavailable-flag";
+              flag.textContent = "🧳";
+              row.appendChild(flag);
+            } else if (completion) {
               const check = document.createElement("span");
               check.className = "done-check";
               check.textContent = "✓";
@@ -153,9 +184,16 @@
 
       const ul = document.createElement("ul");
       floor.rooms.forEach((room) => {
+        const unavailable = window.RosterLogic.getUnavailability(unavailabilityIndex, room, todayString);
         const li = document.createElement("li");
-        li.textContent = room === todayRoom ? `Room ${room} — on duty today` : `Room ${room}`;
-        if (room === todayRoom) li.className = "assigned-today";
+        if (unavailable) {
+          li.textContent = `Room ${room} — unavailable through ${formatDateShort(unavailable.endDate)}`;
+          li.className = "is-unavailable";
+          li.title = `Reported unavailable (leave/TDY) ${formatDateShort(unavailable.startDate)}–${formatDateShort(unavailable.endDate)}`;
+        } else {
+          li.textContent = room === todayRoom ? `Room ${room} — on duty today` : `Room ${room}`;
+          if (room === todayRoom) li.className = "assigned-today";
+        }
         ul.appendChild(li);
       });
       wrap.appendChild(ul);
@@ -177,11 +215,17 @@
 
     assignments.forEach((a) => {
       const completion = a.room ? window.RosterLogic.getCompletion(completionsIndex, a.room, todayString) : null;
+      const unavailable = a.room ? window.RosterLogic.getUnavailability(unavailabilityIndex, a.room, todayString) : null;
       const li = document.createElement("li");
-      li.className = "today-status-row" + (completion ? " is-done" : " is-pending");
-      li.innerHTML = completion
-        ? `<strong>${a.floor} — Room ${a.room}:</strong> ✓ Done at ${formatTime(completion.timestamp)}`
-        : `<strong>${a.floor} — Room ${a.room}:</strong> Not yet marked done`;
+      if (unavailable) {
+        li.className = "today-status-row is-unavailable";
+        li.innerHTML = `<strong>${a.floor} — Room ${a.room}:</strong> 🧳 Unavailable (leave/TDY through ${formatDateShort(unavailable.endDate)}) — can't complete duty`;
+      } else {
+        li.className = "today-status-row" + (completion ? " is-done" : " is-pending");
+        li.innerHTML = completion
+          ? `<strong>${a.floor} — Room ${a.room}:</strong> ✓ Done at ${formatTime(completion.timestamp)}`
+          : `<strong>${a.floor} — Room ${a.room}:</strong> Not yet marked done`;
+      }
       todayStatusList.appendChild(li);
     });
   }
@@ -193,6 +237,35 @@
     } else {
       reportLinkWrap.innerHTML = "";
     }
+  }
+
+  function renderUnavailableReportLink(formUrl) {
+    if (!reportUnavailableWrap) return;
+    if (formUrl) {
+      reportUnavailableWrap.innerHTML = `<a class="report-unavailable-btn" href="${formUrl}" target="_blank" rel="noopener">Report leave/TDY unavailability &rarr;</a>`;
+    } else {
+      reportUnavailableWrap.innerHTML = "";
+    }
+  }
+
+  function renderUnavailable() {
+    if (!unavailableList) return;
+    const todayString = todayStr();
+    const upcoming = window.RosterLogic.getUpcomingUnavailability(unavailabilityData, todayString);
+
+    if (upcoming.length === 0) {
+      unavailableList.innerHTML = `<li class="empty-state">No reported leave/TDY currently affecting the roster.</li>`;
+      return;
+    }
+
+    unavailableList.innerHTML = upcoming
+      .map((u) => {
+        const isNow = u.startDate <= todayString;
+        const status = isNow ? "Away now" : "Upcoming";
+        const noteHtml = u.note ? ` — <span class="unavailable-note">${escapeHtml(u.note)}</span>` : "";
+        return `<li class="unavailable-row${isNow ? " is-now" : ""}"><strong>${u.floor} — Room ${u.room}:</strong> ${status}, ${formatDateShort(u.startDate)}–${formatDateShort(u.endDate)}${noteHtml}</li>`;
+      })
+      .join("");
   }
 
   function renderTasks() {
@@ -246,14 +319,19 @@
     fetch("tasks.json", { cache: "no-store" }).then((r) => r.json()),
     fetch("notes.json", { cache: "no-store" }).then((r) => r.json()),
     fetch("completions.json", { cache: "no-store" }).then((r) => r.json()),
+    fetch("unavailability.json", { cache: "no-store" }).then((r) => r.json()),
   ])
-    .then(([rooms, tasks, notes, completions]) => {
+    .then(([rooms, tasks, notes, completions, unavailability]) => {
       roomsData = rooms;
       tasksData = tasks;
       notesData = notes;
       completionsIndex = window.RosterLogic.buildCompletionsIndex(completions);
+      unavailabilityData = unavailability;
+      unavailabilityIndex = window.RosterLogic.buildUnavailabilityIndex(unavailability);
       renderReportLink(completions.formUrl);
+      renderUnavailableReportLink(unavailability.formUrl);
       renderTodayStatus();
+      renderUnavailable();
       renderCalendar();
       renderFloors();
       renderTasks();

@@ -27,6 +27,12 @@
       <ul class="today-status-list" id="todayStatusList"></ul>
     </div>
 
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h2 class="section-title">Unavailable (leave/TDY)</h2>
+      <ul class="unavailable-list" id="unavailableList"></ul>
+      <div id="reportUnavailableWrap" style="margin-top:0.9rem;"></div>
+    </div>
+
     <div class="module-header">
       <div class="month-nav">
         <button id="prevMonth" aria-label="Previous month">&larr;</button>
@@ -38,7 +44,7 @@
 
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="calendar-grid" id="calendarGrid"></div>
-      <p class="empty-state" style="margin-top:0.5rem;">Weekends have no cleaning assignment. Each weekday shows the room on duty that day, per floor — top to bottom: Floor 1, Floor 2, Floor 3 (also color-coded by the left edge of each room number on smaller screens). A checkmark means that room's duty has been reported complete.</p>
+      <p class="empty-state" style="margin-top:0.5rem;">Weekends have no cleaning assignment. Each weekday shows the room on duty that day, per floor — top to bottom: Floor 1, Floor 2, Floor 3 (also color-coded by the left edge of each room number on smaller screens). A checkmark means that room's duty has been reported complete; a 🧳 means that room reported leave/TDY covering that date and can't complete duty.</p>
     </div>
 
     <div class="card" style="margin-bottom:1.5rem;">
@@ -58,7 +64,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>This roster is generated from <code>data/roster.csv</code>, <code>data/roster-config.json</code>, <code>data/roster-tasks.csv</code>, <code>data/roster-notes.json</code>, and <code>data/completions-config.json</code> — edit those, not the files in this folder.</p>
+    <p>This roster is generated from <code>data/roster.csv</code>, <code>data/roster-config.json</code>, <code>data/roster-tasks.csv</code>, <code>data/roster-notes.json</code>, <code>data/completions-config.json</code>, and <code>data/unavailability-config.json</code> — edit those, not the files in this folder.</p>
   </footer>
 
   <script src="roster-logic.js"></script>

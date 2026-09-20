@@ -45,8 +45,9 @@
     Promise.all([
       fetch("modules/roster/rooms.json", { cache: "no-store" }).then((r) => r.json()),
       fetch("modules/roster/completions.json", { cache: "no-store" }).then((r) => r.json()),
+      fetch("modules/roster/unavailability.json", { cache: "no-store" }).then((r) => r.json()),
     ])
-      .then(([rooms, completionsData]) => {
+      .then(([rooms, completionsData, unavailabilityData]) => {
         const list = document.getElementById("todayDuty");
         const today = todayStr();
         const assignments = window.RosterLogic
@@ -56,10 +57,17 @@
         const completionsIndex = window.RosterLogic
           ? window.RosterLogic.buildCompletionsIndex(completionsData)
           : new Map();
+        const unavailabilityIndex = window.RosterLogic
+          ? window.RosterLogic.buildUnavailabilityIndex(unavailabilityData)
+          : new Map();
 
         if (assigned.length > 0) {
           list.innerHTML = assigned
             .map((a) => {
+              const unavailable = window.RosterLogic.getUnavailability(unavailabilityIndex, a.room, today);
+              if (unavailable) {
+                return `<li><strong>${a.floor}:</strong> Room ${a.room} — <span class="mini-unavailable">🧳 Unavailable</span></li>`;
+              }
               const completion = window.RosterLogic.getCompletion(completionsIndex, a.room, today);
               const status = completion
                 ? `<span class="mini-done">✓ Done ${formatTime(completion.timestamp)}</span>`

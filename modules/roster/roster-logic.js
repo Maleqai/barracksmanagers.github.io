@@ -87,6 +87,37 @@
     return index.get(`${room}|${dateStr}`) || null;
   }
 
+  // unavailabilityData is the parsed modules/roster/unavailability.json.
+  // Returns a Map keyed by room -> array of {room, floor, startDate,
+  // endDate, note}, so a room can have more than one reported range.
+  function buildUnavailabilityIndex(unavailabilityData) {
+    const index = new Map();
+    (unavailabilityData.unavailable || []).forEach((u) => {
+      if (!index.has(u.room)) index.set(u.room, []);
+      index.get(u.room).push(u);
+    });
+    return index;
+  }
+
+  // Returns the unavailability entry covering this room+date (startDate
+  // <= dateStr <= endDate), or null if that room isn't reported
+  // unavailable on that date. Date strings are "YYYY-MM-DD", so plain
+  // string comparison sorts the same as chronological order.
+  function getUnavailability(index, room, dateStr) {
+    const ranges = index.get(room);
+    if (!ranges) return null;
+    return ranges.find((r) => dateStr >= r.startDate && dateStr <= r.endDate) || null;
+  }
+
+  // Every reported entry whose range hasn't fully ended yet (endDate >=
+  // todayStr), soonest-starting first. Powers the roster page's
+  // "currently & upcoming unavailable" list.
+  function getUpcomingUnavailability(unavailabilityData, todayStr) {
+    return (unavailabilityData.unavailable || [])
+      .filter((u) => u.endDate >= todayStr)
+      .sort((a, b) => (a.startDate < b.startDate ? -1 : a.startDate > b.startDate ? 1 : 0));
+  }
+
   global.RosterLogic = {
     parseDateStr,
     toDateStr,
@@ -95,5 +126,8 @@
     getAssignmentForFloor,
     buildCompletionsIndex,
     getCompletion,
+    buildUnavailabilityIndex,
+    getUnavailability,
+    getUpcomingUnavailability,
   };
 })(window);

@@ -16,7 +16,11 @@ ones can be added over time without touching existing ones — see
   notes from the posted paper roster. Residents can mark their floor's
   duty complete via a linked Google Form (no login required), which shows
   up on the roster and the dashboard as a checkmark and timestamp —
-  anonymous by design, room + time only, no names.
+  anonymous by design, room + time only, no names. Residents can also
+  report leave/TDY unavailability (room + date range) via a second Google
+  Form, which flags that room with 🧳 on the roster and dashboard for
+  that date range so the floor manager knows it can't complete duty —
+  informational only, nothing gets auto-reassigned.
 - **📖 Barracks SOP** (`modules/sop/`) — the full Barracks Standard
   Operating Procedures, searchable by keyword, with jump-to-section
   results. Generated from `data/sop-content.json`; see that file's
@@ -52,6 +56,17 @@ runs on a timer rather than only on a commit. See the
 for the full one-time Google Form/Sheet setup walkthrough; until that's
 done, the site simply shows no checkmarks and hides the report button.
 
+## Leave/TDY unavailability tracking
+
+`modules/roster/unavailability.json` follows the exact same pattern
+(`.github/workflows/sync-unavailability.yml` running
+`scripts/sync_unavailability.py`, hourly) against its own Google
+Form/Sheet, where residents report a room + start/end date range. See the
+[`unavailability-config.json` section of `data/README.md`](data/README.md#unavailability-configjson--flagging-rooms-on-leavetdy)
+for setup; until that's done, the site simply shows no 🧳 flags and hides
+the report button. This is informational only — it doesn't change or
+reassign the rotation itself.
+
 ## Project structure
 
 ```
@@ -65,15 +80,18 @@ data/                     Editable CSV/JSON data + the sync pipelines' docs
   roster-tasks.csv          Weekly cleaning checklist by weekday
   roster-notes.json         Standing notes shown on the roster page
   completions-config.json   Google Form/Sheet links for duty tracking
+  unavailability-config.json  Google Form/Sheet links for leave/TDY tracking
   events.csv                Calendar events
   sop-content.json          Full Barracks SOP text, structured for search
   beautification-config.json  Area beautification schedule (anchor date, interval, room count)
 scripts/
   build_data.py            Converts data/*.csv,*.json into modules/*/*.json
   sync_completions.py      Pulls Form responses into completions.json
+  sync_unavailability.py   Pulls Form responses into unavailability.json
 .github/workflows/
   sync-data.yml            Runs build_data.py automatically on push
   sync-completions.yml     Runs sync_completions.py hourly + on push
+  sync-unavailability.yml  Runs sync_unavailability.py hourly + on push
 modules/
   calendar/
     index.html
@@ -87,6 +105,7 @@ modules/
     tasks.json            Generated — don't edit directly
     notes.json            Generated — don't edit directly
     completions.json      Generated — don't edit directly
+    unavailability.json   Generated — don't edit directly
   sop/
     index.html
     sop.js                Renders the SOP text and powers the keyword search

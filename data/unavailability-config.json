@@ -1,5 +1,5 @@
 {
   "_comment": "Fill both of these in after you've set up the Google Form + Sheet for reporting leave/TDY unavailability (see data/README.md for the exact steps). Leave them as empty strings until then -- the sync script will just publish an empty unavailability list, and the site will hide the 'report unavailability' link, rather than failing.",
-  "formUrl": "",
-  "formResponsesCsvUrl": ""
+  "formUrl": "https://forms.gle/hKeBo7iW1uFDB6Pv5",
+  "formResponsesCsvUrl": "https://docs.google.com/spreadsheets/d/e/2PACX-1vTtVy_BBCjD0xgFnz-5m1MSYnAvFuIT_6Kun2dSYVheWXgladKOqEfHG7g81b0aJDPHZ2GFN5H4k2XP/pub?gid=184606418&single=true&output=csv"
 }
